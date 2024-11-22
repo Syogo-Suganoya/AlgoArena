@@ -6,6 +6,7 @@ from collections import deque
 Q = int(input())
 que = deque()
 height = [0] * (Q + 1)
+print(1)
 
 for i in range(Q):
     query = list(map(int, input().split()))
