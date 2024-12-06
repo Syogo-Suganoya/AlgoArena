@@ -6,4 +6,4 @@ RからLの累積和の差分を出力します。
 https://atcoder.jp/contests/typical90/tasks/typical90_j
 
 ## 解説リンク
-https://x.com/e869120/status/1377027868518064129/photo/1
+https://x.com/e869120/status/1380652465834532865
