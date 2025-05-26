@@ -27,16 +27,3 @@ for i in range(H):
                 dp[ni][nj] %= mod
 
 print(dp[-1][-1])
-
-"""
-dp[H][W]=経路数
-配るDP
-H回ループ i
-    W回ループ j
-        右、下方向ループ
-            マスが.以外
-                continue
-            dp[i+dx][j+dy]=dp[i][j]+1
-
-print(dp[-1][-1])
-"""
