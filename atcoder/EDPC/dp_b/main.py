@@ -1,10 +1,12 @@
 N, K = map(int, input().split())
 h = list(map(int, input().split()))
-dp = [float("inf")] * N
-dp[0] = 0
 
-for i in range(1, N):
-    for j in range(1, min(K, i) + 1):
-        dp[i] = min(dp[i], dp[i - j] + abs(h[i] - h[i - j]))
+INF = float("inf")
+dp = [INF] * N
+dp[0] = 0  # 最初は0回のコストでいける
 
-print(dp[N - 1])
+for i in range(N - 1):
+    for j in range(1, K + 1):
+        if i + j < N:
+            dp[i + j] = min(dp[i + j], dp[i] + abs(h[i + j] - h[i]))
+print(dp[-1])
