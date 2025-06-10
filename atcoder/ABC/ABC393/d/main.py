@@ -3,31 +3,29 @@ S = input().strip()
 
 
 def main():
-    # 1 の位置をリスト A に記録
-    A = [i for i in range(N) if S[i] == "1"]
-    M = len(A)
+    # '1' の位置をすべて取得（0-indexed）
+    pos = [i for i, c in enumerate(S) if c == "1"]
 
-    # 中央値を基準に移動回数を計算
-    median = A[M // 2]
+    # '1' がなければスワップ不要
+    if not pos:
+        print(0)
+        return
 
+    m = len(pos)  # '1' の個数
+    mid = m // 2  # 中央のインデックス（0-index）
+
+    # ターゲットとなる「1の塊」の開始位置は、
+    # 中央に対応する pos[mid] を中心として配置する
+    center = pos[mid]
+
+    # そこへ寄せるために必要な swap 回数を合計する
     ans = 0
-    # 左端の位置
-    left = median - (M // 2)
-    for i in range(M):
-        # A[i] は i番目の「1」がある位置
-        now_position = A[i]
-
-        # 「中央値」からM//2だけ左にずらした位置から順番に詰めていく
-        target_position = left + i
-
-        # そのために必要な移動量（距離）を計算
-        move_cost = abs(now_position - target_position)
-
-        # 答えに加算する
-        ans += move_cost
+    for idx, p in enumerate(pos):
+        # 目標位置は center - (mid - idx)
+        target = center - (mid - idx)
+        ans += abs(p - target)
 
     print(ans)
 
 
-if __name__ == "__main__":
-    main()
+main()
