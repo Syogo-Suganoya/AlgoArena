@@ -1,32 +1,28 @@
-# 公式解説をpyに置換
-# https://atcoder.jp/contests/abc379/editorial/11329
-
 from collections import deque
 
 Q = int(input())
-que = deque()
-height = [0] * (Q + 1)
-print(1)
+now = 0  # 現在の時間
+l = deque()  # クエリ1で記録される「木材が積まれた時刻」
 
-for i in range(Q):
+for _ in range(Q):
     query = list(map(int, input().split()))
     t = query[0]
+
     if t == 1:
-        height[i + 1] = height[i]
-        que.append(i)
-        continue
-    if t == 2:
+        # 木材を追加：現在時刻を記録
+        l.append(now)
+
+    elif t == 2:
+        # 時刻を進める
         T = query[1]
-        height[i + 1] = height[i] + T
-        continue
-    if t == 3:
-        height[i + 1] = height[i]
+        now += T
+
+    elif t == 3:
+        # 高さH分だけ燃やす
         H = query[1]
-        ans = 0
-        while que:
-            if height[i + 1] - height[que[0]] >= H:
-                ans += 1
-                que.popleft()
-            else:
-                break
-        print(ans)
+        cnt = 0
+        # now - H 未満の時刻の木材を燃やす
+        while l and l[0] <= now - H:
+            l.popleft()
+            cnt += 1
+        print(cnt)
