@@ -1,29 +1,22 @@
-def main():
-    n = int(input())
-    a = list(map(int, input().split()))
+N = int(input())
+A = list(map(int, input().split()))
 
-    cumulative_stone_transfer = [0] * n  # 累積での石の移動を管理
-    transfer_diff = [0] * (n + 1)  # いもす法による差分管理
+add = [0] * (N + 1)  # 差分（いもす）
+carry = 0  # 今までに累積した add の prefix
 
-    for i in range(n):
-        # 累積石移動の更新
-        if i != 0:
-            cumulative_stone_transfer[i] = (
-                cumulative_stone_transfer[i - 1] + transfer_diff[i]
-            )
-            a[i] += cumulative_stone_transfer[i]
+for i in range(N):
+    # もらう数
+    # imosの累積和
+    carry += add[i]  # 今ここまでに受け取った石の総数
+    A[i] += carry  # 今持っている石
 
-        # 次に渡す石の数を計算
-        transferable_stones = min(n - i - 1, a[i])
-        a[i] -= transferable_stones
+    # 渡す数
+    give = min(N - i - 1, A[i])
+    A[i] -= give  # 自分の手持ちを減らす
 
-        # いもす法の差分更新
-        transfer_diff[i + 1] += 1
-        transfer_diff[min(n, i + transferable_stones + 1)] -= 1
+    # imos
+    # 区間 [i+1, i+give] に +1
+    add[i + 1] += 1
+    add[i + give + 1] -= 1
 
-    # 結果の出力
-    print(" ".join(map(str, a)))
-
-
-if __name__ == "__main__":
-    main()
+print(*A)
