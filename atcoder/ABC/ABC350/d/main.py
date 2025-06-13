@@ -1,51 +1,48 @@
-# Union-Find（Disjoint Set Union）を実装
 class UnionFind:
     def __init__(self, n):
-        # 各ノードの親を初期化（-1 は自身が根であることを示す）
-        self.par = [-1] * (n + 1)
-        # 各連結成分の辺の数を記録
-        self.edge = [0] * (n + 1)
+        self.parent = list(range(n))  # 各人の親（最初は自分自身）
+        self.size = [1] * n  # 各グループの人数
 
-    # ノード x の根を見つける
-    def root(self, x):
-        if self.par[x] < 0:
-            return x
-        self.par[x] = self.root(self.par[x])  # 経路圧縮
-        return self.par[x]
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])  # 経路圧縮
+        return self.parent[x]
 
-    # ノード x と y を統合する
     def union(self, x, y):
-        x = self.root(x)
-        y = self.root(y)
-        # 辺を追加
-        self.edge[x] += 1
-        if x == y:
-            return
-        # サイズが大きい方を x にする
-        if self.par[x] > self.par[y]:
-            x, y = y, x
-        # y を x に統合
-        self.par[x] += self.par[y]
-        self.par[y] = x
-        self.edge[x] += self.edge[y]
-        self.edge[y] = 0
+        x_root = self.find(x)
+        y_root = self.find(y)
+        if x_root == y_root:
+            return False  # すでに同じグループ
+        if self.size[x_root] < self.size[y_root]:
+            x_root, y_root = y_root, x_root
+        self.parent[y_root] = x_root
+        self.size[x_root] += self.size[y_root]
+        return True
+
+    def group_sizes(self):
+        # 各グループの代表者だけに人数を集計
+        sizes = {}
+        for i in range(len(self.parent)):
+            root = self.find(i)
+            sizes[root] = sizes.get(root, 0) + 1
+        return sizes.values()
 
 
-# 入力の読み込み
 N, M = map(int, input().split())
 uf = UnionFind(N)
 
-# 友達関係を Union-Find に追加
+# 入力：友達のペア M 組
 for _ in range(M):
     a, b = map(int, input().split())
+    a -= 1  # 0からスタートするように調整
+    b -= 1
     uf.union(a, b)
 
-# 操作可能な回数を計算
-ans = 0
-for i in range(1, N + 1):
-    if uf.par[i] < 0:  # 根ノードのみ処理
-        v = -uf.par[i]  # 連結成分の頂点数
-        e = uf.edge[i]  # 連結成分の辺の数
-        ans += v * (v - 1) // 2 - e  # 最大辺数 - 現在の辺数
+# 各グループごとの人数を取得
+group_sizes = uf.group_sizes()
 
-print(ans)
+# 各グループで「全員が友達」になるときの友達の数（完全グラフ）
+total_possible_friends = sum(size * (size - 1) // 2 for size in group_sizes)
+
+# そこから、元々の友達の数（M）を引いたら答え
+print(total_possible_friends - M)
