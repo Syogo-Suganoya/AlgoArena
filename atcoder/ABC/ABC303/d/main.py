@@ -1,26 +1,26 @@
-X, Y, Z = map(int, input().split())
+X, Y, Z = map(int, input().split())  # 小文字, 大文字, CapsLock のコスト
 S = input()
 N = len(S)
 
-# dp[i][j]: i文字目まで入力し、CapsLockの状態がj（0: OFF, 1: ON）のときの最小時間
-dp = [[float("inf")] * 2 for _ in range(N + 1)]
-dp[0][0] = 0  # 初期状態：CapsLock OFF
-dp[0][1] = Z  # CapsLockをONにする
+INF = float("inf")
+dp = [[INF] * (N + 1) for _ in range(2)]  # dp[0]: CapsLock OFF, dp[1]: ON
+dp[0][0] = 0  # 最初は CapsLock OFF でコスト0
 
 for i in range(N):
     c = S[i]
+    # 小文字を入力したいとき
     if c == "a":
-        # 小文字の場合
-        dp[i + 1][0] = min(dp[i + 1][0], dp[i][0] + X)  # OFF → OFF
-        dp[i + 1][1] = min(dp[i + 1][1], dp[i][1] + Y)  # ON → ON
-        dp[i + 1][1] = min(dp[i + 1][1], dp[i][0] + Z + Y)  # OFF → ON
-        dp[i + 1][0] = min(dp[i + 1][0], dp[i][1] + Z + X)  # ON → OFF
-    else:
-        # 大文字の場合
-        dp[i + 1][0] = min(dp[i + 1][0], dp[i][0] + Y)  # OFF → OFF
-        dp[i + 1][1] = min(dp[i + 1][1], dp[i][1] + X)  # ON → ON
-        dp[i + 1][1] = min(dp[i + 1][1], dp[i][0] + Z + X)  # OFF → ON
-        dp[i + 1][0] = min(dp[i + 1][0], dp[i][1] + Z + Y)  # ON → OFF
+        # 現在 CapsLock OFF → 小文字入力 = X
+        dp[0][i + 1] = min(dp[0][i + 1], dp[0][i] + X)
+        # 現在 CapsLock ON → 小文字入力 = Y
+        dp[1][i + 1] = min(dp[1][i + 1], dp[1][i] + Y)
+        # 状態切り替えも考慮
+        dp[1][i + 1] = min(dp[1][i + 1], dp[0][i] + Z + Y)  # OFF → ON → a
+        dp[0][i + 1] = min(dp[0][i + 1], dp[1][i] + Z + X)  # ON → OFF → a
+    elif c == "A":
+        dp[0][i + 1] = min(dp[0][i + 1], dp[0][i] + Y)
+        dp[1][i + 1] = min(dp[1][i + 1], dp[1][i] + X)
+        dp[1][i + 1] = min(dp[1][i + 1], dp[0][i] + Z + X)
+        dp[0][i + 1] = min(dp[0][i + 1], dp[1][i] + Z + Y)
 
-# 最終的な最小時間
-print(min(dp[N][0], dp[N][1]))
+print(min(dp[0][N], dp[1][N]))
