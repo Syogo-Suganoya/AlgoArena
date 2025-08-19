@@ -1,42 +1,77 @@
-# https://qiita.com/hyouri/items/c07ab3913d6864a4b348#d%E5%95%8F%E9%A1%8C
+def main():
+    from collections import defaultdict
 
-from collections import defaultdict
+    from sortedcontainers import SortedSet
 
-from sortedcontainers import SortedSet
+    n, m, Sx, Sy = map(int, input().split())
 
-n, m, i, j = map(int, input().split())
-x = defaultdict(SortedSet)
-y = defaultdict(SortedSet)
+    # x[y] = {すべての x 座標}、y[x] = {すべての y 座標}
+    x = defaultdict(SortedSet)
+    y = defaultdict(SortedSet)
 
-for _ in range(n):
-    x_i, y_i = map(int, input().split())
-    x[x_i].add(y_i)
-    y[y_i].add(x_i)
+    # 座標を登録
+    for _ in range(n):
+        xi, yi = map(int, input().split())
+        x[yi].add(xi)  # y 軸でまとめて x を格納
+        y[xi].add(yi)  # x 軸でまとめて y を格納
 
-ans = 0
-for _ in range(m):
-    d, C = input().split()
-    c = int(C)
-    if d == "U":
-        lst = x[i].irange(j, j + c)
-        data = [(i, l_i) for l_i in lst]
-        j += c
-    elif d == "D":
-        lst = x[i].irange(j - c, j)
-        data = [(i, l_i) for l_i in lst]
-        j -= c
-    elif d == "R":
-        lst = y[j].irange(i, i + c)
-        data = [(l_i, j) for l_i in lst]
-        i += c
-    else:
-        lst = y[j].irange(i - c, i)
-        data = [(l_i, j) for l_i in lst]
-        i -= c
+    ans = 0  # 取得したポイントの総数
+    cx, cy = Sx, Sy  # 現在位置
 
-    ans += len(data)
-    for x_i, y_i in data:
-        x[x_i].discard(y_i)
-        y[y_i].discard(x_i)
+    # --- クエリ処理 ---
+    for _ in range(m):
+        D, C = input().split()
+        C = int(C)
 
-print(i, j, ans)
+        if D == "L":  # 左へ C
+            nx = cx - C
+            s = x[cy]  # 同一直線 (y=cy) の x 坐標集合
+            l = s.bisect_left(nx)  # nx 以上
+            r = s.bisect_left(cx)  # cx 未満
+            targets = list(s.islice(l, r))  # nx <= x < cx
+            ans += len(targets)
+            for xx in targets:  # 両辞書から削除
+                s.discard(xx)
+                y[xx].discard(cy)
+            cx = nx
+
+        elif D == "R":  # 右へ C
+            nx = cx + C
+            s = x[cy]
+            l = s.bisect_right(cx)  # cx より大きい
+            r = s.bisect_right(nx)  # nx 以下
+            targets = list(s.islice(l, r))
+            ans += len(targets)
+            for xx in targets:
+                s.discard(xx)
+                y[xx].discard(cy)
+            cx = nx
+
+        elif D == "D":  # 下へ C
+            ny = cy - C
+            s = y[cx]
+            l = s.bisect_left(ny)
+            r = s.bisect_left(cy)
+            targets = list(s.islice(l, r))  # ny <= y < cy
+            ans += len(targets)
+            for yy in targets:
+                s.discard(yy)
+                x[yy].discard(cx)
+            cy = ny
+
+        elif D == "U":  # 上へ C
+            ny = cy + C
+            s = y[cx]
+            l = s.bisect_right(cy)
+            r = s.bisect_right(ny)
+            targets = list(s.islice(l, r))  # cy < y <= ny
+            ans += len(targets)
+            for yy in targets:
+                s.discard(yy)
+                x[yy].discard(cx)
+            cy = ny
+
+    print(cx, cy, ans)
+
+
+main()
