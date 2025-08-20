@@ -1,34 +1,36 @@
 N = int(input())
-N -= 1  # 0-indexedにする（例：最初の回文数を0番目とする）
 
-d = 1  # 桁数の初期値を1に設定
+# Nが1から10までなら、0から9までの1桁の回文数の範囲
+if N <= 10:
+    print(N - 1)
+    exit()  # 1番目は0、2番目は1、…となる
+
+count = 10  # ここまでに存在する回文数の個数（1桁分をカウント）
+digit = 2  # 現在の桁数（2桁以上を考えるため初期値は2）
+
 while True:
-    # その桁数の回文数の「上半分」の桁数
-    x = (d + 1) // 2
-    # その桁数で作れる回文数の個数は9 * 10**(x-1)
-    count = 9 * 10 ** (x - 1)
-    # Nがその桁数に収まるなら、dが求める回文数の桁数
-    if N < count:
+    half_len = (digit + 1) // 2  # 回文を作るための前半の桁数
+    start = 10 ** (half_len - 1)  # 前半部分の最小値（例：100...）
+    end = 10**half_len - 1  # 前半部分の最大値（例：999...）
+    num_palindromes = end - start + 1  # この桁数の回文数の個数
+
+    # Nがこの桁数の回文数に含まれるかチェック
+    if N <= count + num_palindromes:
+        offset = N - count - 1  # この桁数内で何番目かを計算
+        half_number = start + offset  # 前半部分の数字を決定
+        half_str = str(half_number)  # 文字列に変換
+
+        # 回文を作る
+        if digit % 2 == 0:
+            # 偶数桁の場合は前半をそのまま反転して後半に使う
+            palindrome = half_str + half_str[::-1]
+        else:
+            # 奇数桁の場合は中央の数字を重複させずに反転して後半に使う
+            palindrome = half_str + half_str[-2::-1]
+
+        print(palindrome)
         break
-    # 収まらない場合は、Nからその個数を引いて次の桁数へ
-    N -= count
-    d += 1
 
-# 求める回文数の上位桁の桁数
-x = (d + 1) // 2
-# その桁数で最小の上位桁の値（例：100... など）
-start = 10 ** (x - 1)
-# N番目の回文数の上位桁の数値
-num = start + N
-
-# 文字列に変換して回文数を作る
-s = str(num)
-if d % 2 == 0:
-    # 桁数が偶数なら、逆順にしてそのまま繋ぐ
-    palindrome = s + s[::-1]
-else:
-    # 桁数が奇数なら、中央の桁を重複させないように逆順の1文字目を除いて繋ぐ
-    palindrome = s + s[-2::-1]
-
-# 出力：求める回文数
-print(palindrome)
+    # Nがこの桁数に含まれない場合は次の桁数に進む
+    count += num_palindromes
+    digit += 1
