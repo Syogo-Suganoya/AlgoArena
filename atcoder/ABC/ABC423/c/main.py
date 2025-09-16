@@ -1,22 +1,24 @@
-N, S = map(int, input().split())
+N, R = map(int, input().split())
 A = list(map(int, input().split()))
 
-# 0の位置を全て取得（書き換える必要があるマスのインデックス）
-idx0 = [i for i, a in enumerate(A) if a == 0]
-
-# もし0が1つもなければ、書き換えは不要
-if len(idx0) == 0:
+# すでに全て1なら0を出力して終了
+if all(v == 1 for v in A):
     print(0)
     exit()
 
-# 書き換え範囲を決定
-# 左端: スタート位置 S と最も左の0の位置のどちらか小さい方
-# 右端: スタート位置 S と最も右の0の位置のどちらか大きい方 (+1 でスライス範囲を含める)
-L = min(S, idx0[0])
-R = max(S, idx0[-1] + 1)
+# 左端の0を探す
+l = A.index(0)
+# 右端の0を探す
+r = N - 1 - A[::-1].index(0)
 
-# 書き換え回数の計算
-# 範囲内の0は1回、1は2回通る必要がある
-# sum(A[L:R]) で元々1のマスの分を加算
-# R-L で範囲内の全マスに対する最低1回の書き換えを加算
-print(sum(A[L:R]) + (R - L))
+ans = 0
+
+# 左側の書き換え回数
+for v in A[l:R]:
+    ans += 1 if v == 0 else 2
+
+# 右側の書き換え回数
+for v in A[R : r + 1]:
+    ans += 1 if v == 0 else 2
+
+print(ans)
