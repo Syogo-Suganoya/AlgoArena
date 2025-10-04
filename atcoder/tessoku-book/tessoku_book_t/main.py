@@ -2,6 +2,7 @@ def lcs(s, t):
     len_s, len_t = len(s), len(t)
     dp = [[0] * (len_t + 1) for _ in range(len_s + 1)]
 
+    # 長共通部分列の文字数
     for i in range(1, len_s + 1):
         for j in range(1, len_t + 1):
             if s[i - 1] == t[j - 1]:
