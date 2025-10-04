@@ -24,5 +24,4 @@ for i in range(1, N + 1):
             dp[i][k] = max(dp[i][k], dp[j][k - 1] + cnt[j + 1][i])
 
 # 答え：N ページを K 章で分けたときの最大良さ
-ans = dp[N][K]
-print(ans)
+print(dp[N][K])
