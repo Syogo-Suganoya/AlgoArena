@@ -1,49 +1,37 @@
 N = int(input())
 
-# honest[i]: i番目の人が「正直者」と言った人のインデックスリスト
-# liar[i]: i番目の人が「不親切者」と言った人のインデックスリスト
-honest = [[] for _ in range(N)]
-liar = [[] for _ in range(N)]
-
-# 各人の証言を受け取る
-for i in range(N):
+# 各人の証言を保持
+# testimonies[i] = [(x, y), (x, y), ...]
+#  i番目の人が x さんは正直(y=1)／不親切(y=0) と証言している
+testimonies = []
+for _ in range(N):
     A = int(input())
+    temp = []
     for _ in range(A):
         x, y = map(int, input().split())
-        # y==1なら正直者と言っている
-        if y == 1:
-            honest[i].append(x - 1)
-        else:
-            # y==0なら不親切者と言っている
-            liar[i].append(x - 1)
+        temp.append((x - 1, y))  # 0-index に直す
+    testimonies.append(temp)
 
-max_honest = 0  # 最大の正直者数を記録
+ans = 0  # 最大の正直者人数を記録
 
-# 全ての「正直者・不親切者」パターンをビット全探索
+# 各人が正直(1) or 不親切(0) かを全探索 (2^N通り)
 for mask in range(1 << N):
-    valid = True  # 証言の矛盾がないかのフラグ
-    count = 0  # このパターンでの正直者数
-
+    ok = True  # この仮定が矛盾なく成り立つかどうか
     for i in range(N):
-        # i番目の人が正直者なら (maskのiビットが1)
-        if (mask >> i) & 1:
-            count += 1
-            # iが正直者なら、その証言は真実でなければならない
-            # 正直者リストの人は正直者でなければならない
-            for h in honest[i]:
-                if not ((mask >> h) & 1):
-                    valid = False  # 矛盾発見
-                    break
-            # 不親切者リストの人は正直者であってはいけない
-            for l in liar[i]:
-                if (mask >> l) & 1:
-                    valid = False  # 矛盾発見
-                    break
-        if not valid:
-            break  # 矛盾があれば、もうこのパターンは無効なので早めに抜ける
+        # maskのiビット目が1 → i番目の人を正直者と仮定
+        if not (mask >> i) & 1:
+            continue
+        # i番目が正直なら、その証言はすべて真実である必要がある
+        for x, y in testimonies[i]:
+            # x番目の人の実際の仮定（maskで決まる）
+            if ((mask >> x) & 1) != y:
+                ok = False
+                break
+        if not ok:
+            break
+    if ok:
+        # 矛盾がなければ、この仮定の正直者数をカウント
+        honest_count = bin(mask).count("1")
+        ans = max(ans, honest_count)
 
-    if valid:
-        # 矛盾がなければ最大値を更新
-        max_honest = max(max_honest, count)
-
-print(max_honest)
+print(ans)
