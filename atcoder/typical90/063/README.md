@@ -4,7 +4,7 @@ Bit全探索で解けます。制約のHが小さいことに注目し、Hの全
 - 自分用解説
 https://x.com/ssuga620282/status/1880122154412585144
 
-## 問題リンクあ
+## 問題リンク
 https://atcoder.jp/contests/typical90/tasks/typical90_bk
 
 ## 解説リンク

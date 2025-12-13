@@ -9,4 +9,4 @@ L-1 は +、R は - します。
 https://atcoder.jp/contests/typical90/tasks/typical90_bl
 
 ## 解説リンク
-https://x.com/e869120/status/1377027868518064129
+https://x.com/e869120/status/1403483256234799105
