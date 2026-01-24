@@ -1,9 +1,10 @@
 # 公式解説をpyに置換
 # https://atcoder.jp/contests/abc380/editorial/11362
 
+
 def popcount(n):
     # nの二進数表現で1の個数をカウントする
-    return bin(n).count('1')
+    return bin(n).count("1")
 
 
 # メイン処理
@@ -16,7 +17,7 @@ def main():
     for i in range(q):
         k = queries[i] - 1  # 0-index化
         blk = k // len(s)  # ブロック番号
-        pt = k % len(s)    # ブロック内のインデックス
+        pt = k % len(s)  # ブロック内のインデックス
         if popcount(blk) % 2:  # blkの1の個数が奇数なら反転
             result.append(s[pt].swapcase())
         else:  # そのまま
